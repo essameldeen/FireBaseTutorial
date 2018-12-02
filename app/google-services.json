@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "3286749406",
+    "firebase_url": "https://fir-tutriol.firebaseio.com",
+    "project_id": "fir-tutriol",
+    "storage_bucket": "fir-tutriol.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3286749406:android:1b44b15cf6cbc33b",
+        "android_client_info": {
+          "package_name": "com.example.essam.noytification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3286749406-bsikisqrci0lbeceufr5t9ru1ai6k8t8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.essam.noytification",
+            "certificate_hash": "c0e8cf87e40a4f7027470f23dac277d9bcd96230"
+          }
+        },
+        {
+          "client_id": "3286749406-8k1g83m5lo5a038iartsl1ur3abibr65.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJF5vSgPCQwL9XwR_sfcxiJ9PGsOLAjS0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3286749406-8k1g83m5lo5a038iartsl1ur3abibr65.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
