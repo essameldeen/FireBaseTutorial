@@ -102,18 +102,25 @@
         android:layout_marginEnd="32dp"
         android:text="Delete Note"
         android:onClick="deleteNote"
-        app:layout_constraintBottom_toTopOf="@+id/showNote"
+        app:layout_constraintBottom_toTopOf="@+id/scroller"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deleteDescription" />
 
 
-    <TextView
-        android:id="@+id/showNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroller"
+        android:layout_width="match_parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deleteNote" />
+        app:layout_constraintTop_toBottomOf="@+id/deleteNote"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/showNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            />
+    </android.support.v4.widget.NestedScrollView>
+
 
 </android.support.constraint.ConstraintLayout>

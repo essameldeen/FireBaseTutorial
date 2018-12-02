@@ -13,12 +13,15 @@ import android.widget.Toast;
 import com.example.essam.noytification.Model.Note;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,32 +40,33 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
     private DocumentReference noteRef;
+    private CollectionReference collectionReference;
 
     @Override
     protected void onStart() {
         super.onStart();
         // real time fetch data
         // path this because when the activity detached the listener removed
-        noteRef.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        collectionReference.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
-                    Toast.makeText(MainActivity.this, "Failed To Loading!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.getMessage());
                     return;
                 }
-                if (documentSnapshot.exists()) {
-                    Note note = documentSnapshot.toObject(Note.class);
-                    String title = note.getTitle();
-                    String description = note.getDescription();
-                    displayData(title, description);
-                } else {
-                    displayData("", "");
-                }
-            }
-        });
+                String data = "";
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                    Note note = queryDocumentSnapshot.toObject(Note.class);
+                    note.setDocumentId(queryDocumentSnapshot.getId());
+                    data += "ID :" + note.getDocumentId() + "\n" +
+                            "Title :" + note.getTitle() + "\n" + "Description :" + note.getDescription() + "\n\n";
 
+                }
+                displayData(data);
+            }
+
+        });
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         initView();
         firebaseFirestore = FirebaseFirestore.getInstance();
         noteRef = firebaseFirestore.document("NoteBook/Note");
+        collectionReference = firebaseFirestore.collection("NoteBook");
 
 
     }
@@ -94,20 +99,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveInFireBase(String title, String description) {
         Note note = new Note(title, description);
-        noteRef.set(note)
-                .addOnSuccessListener(new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        Toast.makeText(getApplicationContext(), "Save  Successful", Toast.LENGTH_SHORT).show();
-                        clearField();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed To Save", Toast.LENGTH_SHORT).show();
-                Log.d("ERROR", e.getMessage());
-            }
-        });
+//        noteRef.set(note)
+//                .addOnSuccessListener(new OnSuccessListener() {
+//                    @Override
+//                    public void onSuccess(Object o) {
+//                        Toast.makeText(getApplicationContext(), "Save  Successful", Toast.LENGTH_SHORT).show();
+//                        clearField();
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(getApplicationContext(), "Failed To Save", Toast.LENGTH_SHORT).show();
+//                Log.d("ERROR", e.getMessage());
+//            }
+//        });
+
+        collectionReference.add(note);
+        clearField();
     }
 
     public void updateNote(View view) {
@@ -119,29 +127,49 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // fetch all data in collection
     public void fetchData(View view) {
-        noteRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                String data = "";
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                    Note note = queryDocumentSnapshot.toObject(Note.class);
+                    note.setDocumentId(queryDocumentSnapshot.getId());
+                    data += "ID :" + note.getDocumentId() + "\n" +
+                            "Title :" + note.getTitle() + "\n" + "Description :" + note.getDescription() + "\n\n";
 
-                    Note note = documentSnapshot.toObject(Note.class);
-                    String title = note.getTitle();
-                    String description = note.getDescription();
-                    displayData(title, description);
-
-                } else {
-                    Toast.makeText(MainActivity.this, "Note Not Found", Toast.LENGTH_SHORT).show();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed To Get Data", Toast.LENGTH_SHORT).show();
-                Log.d("ERROR", e.getMessage());
+                displayData(data);
             }
         });
     }
+
+
+// fetch one element
+//    public void fetchData(View view) {
+//        noteRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                if (documentSnapshot.exists()) {
+//
+//                    Note note = documentSnapshot.toObject(Note.class);
+//                    String title = note.getTitle();
+//                    String description = note.getDescription();
+//                    displayData(title, description);
+//
+//                } else {
+//                    Toast.makeText(MainActivity.this, "Note Not Found", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(getApplicationContext(), "Failed To Get Data", Toast.LENGTH_SHORT).show();
+//                Log.d("ERROR", e.getMessage());
+//            }
+//        });
+//    }
 
     public void deleteDescription(View view) {
 
@@ -156,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void displayData(String title, String description) {
-        show_note.setText("Title : " + title + "\n" + "Description: " + description);
+    private void displayData(String data) {
+        show_note.setText(data);
     }
 
     private void clearField() {
