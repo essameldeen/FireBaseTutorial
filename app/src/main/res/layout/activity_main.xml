@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:scrollbars="vertical"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
@@ -30,10 +31,25 @@
         android:ems="10"
         android:hint="Enter The Description"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/save"
+        app:layout_constraintBottom_toTopOf="@+id/priority"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <EditText
+        android:id="@+id/priority"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="32dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter The Priority"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/save"
+        />
 
     <Button
         android:id="@+id/save"
@@ -47,7 +63,7 @@
         app:layout_constraintBottom_toTopOf="@+id/loadNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+        app:layout_constraintTop_toBottomOf="@+id/priority" />
 
     <Button
         android:id="@+id/loadNote"
@@ -111,15 +127,17 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroller"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deleteNote"
-        android:layout_height="wrap_content">
+        app:layout_constraintTop_toBottomOf="@+id/deleteNote">
+
         <TextView
             android:id="@+id/showNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            />
+            android:padding="8dp"
+            android:layout_marginStart="32dp" />
     </android.support.v4.widget.NestedScrollView>
 
 
