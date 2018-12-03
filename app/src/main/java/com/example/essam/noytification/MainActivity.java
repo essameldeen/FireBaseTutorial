@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
@@ -89,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
         noteRef = firebaseFirestore.document("NoteBook/Note");
         collectionReference = firebaseFirestore.collection("NoteBook");
 
-        createBatchedWrite();
-
+        //createBatchedWrite();
+       // createTransactions();
 
     }
 
@@ -134,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d("ERROR", e.getMessage());
 //            }
 //        });
-
-        collectionReference.add(note);
+        // add sub note to note "collection to document
+        collectionReference.document().collection("Child Notes ").add(note);
         clearField();
     }
 
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         title_edit.setText("");
     }
 
-    // make multiple of operations and must  all success to change happen if one failed not change happen
+    // atomic operation make multiple of operations and must  all success to change happen if one failed not change happen
     private void createBatchedWrite() {
         WriteBatch batch = firebaseFirestore.batch();
         // first one
@@ -290,6 +291,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void createTransactions() {
+        firebaseFirestore.runTransaction(new Transaction.Function<Long>() {
+            @android.support.annotation.Nullable
+            @Override
+            public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                // read  operation first
+                DocumentReference noteReference = collectionReference.document("New Note");
+                DocumentSnapshot documentSnapshot = transaction.get(noteReference);
+                Long priorityNew = documentSnapshot.getLong("priority") + 1;
+                // write operations second
+                transaction.update(noteReference, "priority", priorityNew);
+
+                return priorityNew;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Long>() {
+            @Override
+            public void onSuccess(Long aLong) {
+                Toast.makeText(MainActivity.this, "New Value  : " + aLong, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
